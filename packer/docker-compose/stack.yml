@@ -1,0 +1,22 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: master
+      MYSQL_PASSWORD: testtest
+
+  vibrato:
+    image: vibrato/website
+    restart: always
+    links:
+      - "db:database"
+    ports:
+      - 80:80
