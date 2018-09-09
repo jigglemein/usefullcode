@@ -6,21 +6,23 @@ pipeline {
         sh "cd terraform; terraform init"
       }
     }
-    stage('Terraform: Plan') {
+    stage('Terraform: Plan and Apply') {
+      when {
+        expression { params.ACTION == 'APPLY' }
+      }
       steps {
         sh "export TF_WORKSPACE=${params.USERNAME}"
         sh "cd terraform; terraform plan -var 'env=${params.USERNAME}'"
+        sh "cd terraform; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
-    stage('Terraform: apply') {
+    stage('Terraform: destroy') {
+      when {
+        expression { params.ACTION == 'DESTROY' }
+      }
       steps {
-        input {
-           message "Should we continue?"
-           ok "Yes, we should."
-           submitter "alice,bob" 
-           sh "export TF_WORKSPACE=${params.USERNAME}"
-           sh "cd terraform; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
-        }
+        sh "export TF_WORKSPACE=${params.USERNAME}"
+        sh "cd terraform; terraform destroy -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
   }
