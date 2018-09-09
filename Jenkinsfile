@@ -13,8 +13,8 @@ pipeline {
       }
       steps {
         sh "export TF_WORKSPACE=${params.USERNAME}"
-        sh "cd terraform; terraform plan -var 'env=${params.USERNAME}'"
-        sh "cd terraform; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
+        sh "cd terraform; export TF_WORKSPACE=${params.USERNAME}; terraform plan -var 'env=${params.USERNAME}'"
+        sh "cd terraform; export TF_WORKSPACE=${params.USERNAME}; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
     stage('Terraform: destroy') {
@@ -23,7 +23,7 @@ pipeline {
       }
       steps {
         sh "export TF_WORKSPACE=${params.USERNAME}"
-        sh "cd terraform; terraform destroy -var 'env=${params.USERNAME}' --auto-approve"
+        sh "cd terraform; export TF_WORKSPACE=${params.USERNAME}; terraform destroy -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
   }
