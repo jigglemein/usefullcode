@@ -1,8 +1,5 @@
 pipeline {
   agent any
-  parameters {
-    string(defaultValue: "d00001", description: 'Enter username to create environment for', name: 'USERNAME')      
-  }
   stages {
     stage('Terraform: Init') {
       steps {
