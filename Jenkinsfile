@@ -14,9 +14,13 @@ pipeline {
     }
     stage('Terraform: apply') {
       steps {
-  
-        sh "export TF_WORKSPACE=${params.USERNAME}"
-        sh "cd terraform; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
+        input {
+           message "Should we continue?"
+           ok "Yes, we should."
+           submitter "alice,bob" 
+           sh "export TF_WORKSPACE=${params.USERNAME}"
+           sh "cd terraform; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
+        }
       }
     }
   }
