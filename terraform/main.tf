@@ -1,5 +1,5 @@
 resource "aws_launch_configuration" "vibrato-lc" {
-  name_prefix             = "vibrato-lc-"
+  name_prefix             = "${var.env}-webserver-lc"
   image_id                = "${data.aws_ami.vibrato_ami.id}"
   instance_type           = "t2.micro"
   security_groups         = ["${aws_security_group.ec2.id}"]
@@ -24,12 +24,17 @@ resource "aws_autoscaling_group" "vibrato-ag" {
   lifecycle {
       create_before_destroy = true
   }
+  tag {
+    key                 = "name"
+    value               = "${var.env}-webserver"
+    propagate_at_launch = true
+  }
 }
 
 data "aws_availability_zones" "all" {}
 
 resource "aws_elb" "vibrato-elb" {
-  name = "vibrato-elb"
+  name = "${var.env}-webserver-elb"
   security_groups = ["${aws_security_group.elb.id}"]
   availability_zones = ["${data.aws_availability_zones.all.names}"]
   health_check {
@@ -47,3 +52,17 @@ resource "aws_elb" "vibrato-elb" {
   }
 }
 
+data "aws_route53_zone" "primary" {
+  name         = "jigglemein.com"
+}
+
+resource "aws_route53_record" "www" {
+  zone_id = "${data.aws_route53_zone.primary.zone_id}"
+  name    = "${var.env}.jigglemein.com"
+  type    = "A"
+  alias {
+    name                   = "${aws_elb.vibrato-elb.dns_name}"
+    zone_id                = "${aws_elb.vibrato-elb.zone_id}"
+    evaluate_target_health = true
+  }
+}

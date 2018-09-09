@@ -1,5 +1,6 @@
 resource "aws_security_group" "ec2" {
-  name = "ec2-web-security-group"
+  name = "ec2-web-security-group-for-${var.env}"
+  vpc_id      = "${var.vpc_id}"
   egress {
     protocol    = -1
     from_port   = 0
@@ -18,7 +19,8 @@ resource "aws_security_group_rule" "allow_elb_to_ec2s" {
 }
 
 resource "aws_security_group" "elb" {
-  name = "vibrato-elb"
+  name = "vibrato-elb-for-${var.env}"
+  vpc_id      = "${var.vpc_id}"
   egress {
     from_port = 0
     to_port = 0
