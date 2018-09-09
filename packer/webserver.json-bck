@@ -22,8 +22,8 @@
     "ami_name": "vibrato website {{timestamp}}"
   }],
   "provisioners": [{
-    "type": "shell",
-    "inline": ["sudo yum install ruby19 -y"]
+    "type": "ansible",
+    "playbook_file": "ansible-vibrato-website-install.yaml"    
   },{
     "type": "file",
     "source": "tests",

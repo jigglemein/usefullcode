@@ -6,6 +6,7 @@
       yum: name={{item}} state=present update_cache=yes
       with_items:
         - docker
+        - ruby19
 
     - name: ensure docker started
       service: name=docker state=started enabled=yes
