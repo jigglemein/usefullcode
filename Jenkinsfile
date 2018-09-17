@@ -6,12 +6,24 @@ pipeline {
         sh "cd terraform; terraform init"
       }
     }
-    stage('Terraform: Plan and Apply') {
+    stage('Terraform: Plan') {
       when {
         expression { params.ACTION == 'APPLY' }
       }
       steps {
         sh "cd terraform; export TF_WORKSPACE=${params.USERNAME}; terraform plan -var 'env=${params.USERNAME}'"
+        script {
+          timeout(time: 10, unit: 'MINUTES') {
+            input(id: "Deploy Gate", message: "Deploy ${params.USERNAME}?", ok: 'Deploy')
+          }
+        }
+      }
+    }
+    stage('Terraform: Apply') {
+      when {
+        expression { params.ACTION == 'APPLY' }
+      }
+      steps {
         sh "cd terraform; export TF_WORKSPACE=${params.USERNAME}; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
