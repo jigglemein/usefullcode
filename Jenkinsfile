@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Terraform: Init') {
       steps {
-        sh "cd terraform/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform init"
+        sh "cd terraform/provisioners/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform init"
       }
     }
     stage('Terraform: Plan') {
@@ -11,7 +11,7 @@ pipeline {
         expression { params.ACTION == 'APPLY' }
       }
       steps {
-        sh "cd terraform/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform plan -var 'env=${params.USERNAME}'"
+        sh "cd terraform/provisioners/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform plan -var 'env=${params.USERNAME}'"
         script {
           timeout(time: 10, unit: 'MINUTES') {
             input(id: "Deploy Gate", message: "Deploy ${params.USERNAME}?", ok: 'Deploy')
@@ -24,7 +24,7 @@ pipeline {
         expression { params.ACTION == 'APPLY' }
       }
       steps {
-        sh "cd terraform/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
+        sh "cd terraform/provisioners/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform apply -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
     stage('Terraform: destroy') {
@@ -32,7 +32,7 @@ pipeline {
         expression { params.ACTION == 'DESTROY' }
       }
       steps {
-        sh "cd terraform/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform destroy -var 'env=${params.USERNAME}' --auto-approve"
+        sh "cd terraform/provisioners/webserver; export TF_WORKSPACE=${params.USERNAME}; terraform destroy -var 'env=${params.USERNAME}' --auto-approve"
       }
     }
   }
