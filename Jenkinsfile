@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Terraform: Init') {
       steps {
-        sh "cd terraform; terraform init"
+        sh "cd terraform; export TF_WORKSPACE=${params.USERNAME}; terraform init"
       }
     }
     stage('Terraform: Plan') {
